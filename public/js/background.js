@@ -9,39 +9,37 @@
 
     FactsList.prototype.MAX_STORED = 200;
 
-    FactsList.prototype.factsUrl = "http://simple-planet-5852.herokuapp.com/facts?format=json&count=80";
+    FactsList.prototype.factsUrl = 'http://simple-planet-5852.herokuapp.com/facts?format=json&count=80';
 
     FactsList.prototype.factsIdentifier = 'factsList';
 
     FactsList.prototype.readFactsIdentifier = 'factsRead';
 
-    FactsList.prototype.facts = JSON.parse(window.localStorage.getItem("factsList")) || [];
+    FactsList.prototype.facts = [];
 
-    FactsList.prototype.readFacts = JSON.parse(window.localStorage.getItem("factsRead")) || {
-      "count": 0
+    FactsList.prototype.readFacts = {
+      'count': 0
     };
 
-    FactsList.prototype.isEnabled = window.localStorage.getItem('pluginEnabled');
+    FactsList.prototype.isEnabled = true;
 
     _instance = null;
 
     FactsList.instance = function() {
-      if (!(this._instance != null)) {
-        _instance = new this;
-      }
-      return _instance;
+      return _instance != null ? _instance : _instance = new this;
     };
 
     function FactsList() {
-      var pluginEnabled;
-      pluginEnabled = window.localStorage.getItem('pluginEnabled');
-      if (pluginEnabled === null || pluginEnabled === 'true') {
-        pluginEnabled = true;
+      this.isEnabled = window.localStorage.getItem('pluginEnabled') || this.isEnabled;
+      if (this.isEnabled === true || this.isEnabled === 'true') {
+        this.isEnabled = true;
         window.localStorage.setItem('pluginEnabled', true);
       } else {
-        pluginEnabled = false;
+        this.isEnabled = false;
       }
-      window.FactsUtils.updateBadge(pluginEnabled);
+      window.FactsUtils.updateBadge(this.isEnabled);
+      this.facts = JSON.parse(window.localStorage.getItem("factsList")) || this.facts;
+      this.readFacts = JSON.parse(window.localStorage.getItem("factsRead")) || this.readFacts;
       this.fetchFactsIfRequired();
     }
 
@@ -101,8 +99,9 @@
     FactsList.prototype.isReadFact = function(fact) {
       if (this.readFacts[fact.id] != null) {
         return true;
+      } else {
+        return false;
       }
-      return false;
     };
 
     FactsList.prototype.clearReadFactsIfRequired = function() {

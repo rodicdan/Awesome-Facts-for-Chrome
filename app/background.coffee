@@ -3,33 +3,34 @@ class FactsList
 
   MAX_STORED: 200
 
-  factsUrl: "http://simple-planet-5852.herokuapp.com/facts?format=json&count=80"
+  factsUrl: 'http://simple-planet-5852.herokuapp.com/facts?format=json&count=80'
   
   factsIdentifier: 'factsList'
 
   readFactsIdentifier: 'factsRead'
 
-  facts: JSON.parse(window.localStorage.getItem("factsList")) || []
-
-  readFacts: JSON.parse(window.localStorage.getItem("factsRead")) || { "count": 0 }
-  
-  isEnabled: window.localStorage.getItem('pluginEnabled')
+  # Defaults
+  facts: []
+  readFacts: { 'count': 0 }
+  isEnabled: true
   
   _instance = null
   @instance: ->
-    if not @._instance?
-      _instance = new @
-    _instance
+    _instance ?= new @
     
   constructor: ->
     # Enable plugin if just installed and update badge
-    pluginEnabled = window.localStorage.getItem('pluginEnabled')
-    if pluginEnabled == null || pluginEnabled == 'true'
-      pluginEnabled = true
-      window.localStorage.setItem('pluginEnabled', true)
+    @isEnabled = window.localStorage.getItem('pluginEnabled') || @isEnabled
+    if @isEnabled == true || @isEnabled == 'true'
+      @isEnabled = true
+      window.localStorage.setItem('pluginEnabled', true) # Save default
     else
-      pluginEnabled = false
-    window.FactsUtils.updateBadge pluginEnabled
+      @isEnabled = false
+    window.FactsUtils.updateBadge @isEnabled
+    
+    # Load existing data
+    @facts = JSON.parse(window.localStorage.getItem("factsList")) || @facts
+    @readFacts = JSON.parse(window.localStorage.getItem("factsRead")) || @readFacts
     
     # Load facts if required
     @fetchFactsIfRequired()
@@ -76,10 +77,8 @@ class FactsList
     @clearReadFactsIfRequired()
 
   isReadFact: (fact) ->
-    if @readFacts[fact.id]?
-      return true
-    return false
-
+    if @readFacts[fact.id]? then true else false
+    
   clearReadFactsIfRequired: ->
     if @readFacts["count"] > @MAX_STORED
       @readFacts = { "count": 0 }
