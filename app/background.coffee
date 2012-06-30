@@ -1,3 +1,8 @@
+DEBUG = false
+
+DLog = (content) ->
+  console.log content if DEBUG
+
 class FactsList
   MINIMUM_FACTS_COUNT: 50 # until new fetch is required
 
@@ -36,16 +41,16 @@ class FactsList
     @fetchFactsIfRequired()
 
   fetchFacts: (callback = null) ->
-    console.log 'fetching facts'
+    DLog 'fetching facts'
     $.get @factsUrl, (data) =>
       if data?
         @facts = @facts.concat data
-        console.log @facts
+        DLog @facts
         @saveFacts()
         callback @facts if callback?
 
   fetchFactsIfRequired: ->
-    console.log 'checking if fetch needed'
+    DLog 'checking if fetch needed'
     @fetchFacts() if @facts.length < @MINIMUM_FACTS_COUNT
 
   getFact: ->
@@ -53,7 +58,7 @@ class FactsList
     
     # Get facts until its not in our read facts
     targetFact = @facts.splice(0, 1)[0]
-    console.log targetFact
+    DLog targetFact
     while @isReadFact(targetFact)
       targetFact = @facts.splice(0, 1)[0]
     

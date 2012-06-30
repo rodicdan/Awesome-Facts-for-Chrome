@@ -38,6 +38,19 @@ task :less do
   end
 end
 
+desc "Compress JS files"
+task :compress do
+  puts "compressing javascript..."
+  base = CONFIG[:coffee][:output]
+  system "uglifyjs --overwrite #{base}/background.js"
+  system "uglifyjs --overwrite #{base}/content.js"
+  system "uglifyjs --overwrite #{base}/popup.js"
+  system "uglifyjs --overwrite #{base}/utils/factsutils.js"
+  system "uglifyjs --overwrite #{base}/views/fact.js"
+  system "uglifyjs --overwrite #{base}/views/popup.js"
+end
+  
+
 ###
 # Compile all files from input to output that matches extension
 # Options should have 4 variables:
