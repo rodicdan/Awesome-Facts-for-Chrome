@@ -7,3 +7,4 @@ Awesome Facts for Chrome
 3. Faster response when a fact is shared
 4. Facts preferences page
 5. More facts
+6. Submitting facts page
